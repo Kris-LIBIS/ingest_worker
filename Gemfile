@@ -1,0 +1,13 @@
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
+
+gem 'rerun'
+gem 'roda'
+gem 'puma'
+gem 'awesome_print'
+gem 'dotenv'
+
+gem 'teneo-data_model'
+gem 'teneo-ingester'
+gem 'rake'
