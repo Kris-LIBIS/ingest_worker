@@ -1,9 +1,0 @@
-# frozen_string_literal: true
-
-require 'teneo-ingester'
-
-#noinspection RubyResolve
-load Teneo::Ingester::RAKEFILE
-
-#noinspection RubyResolve
-Dir.glob(File.join(File.expand_path(__dir__), '*.rake')).each { |f| load f }
