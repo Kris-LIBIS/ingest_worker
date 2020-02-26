@@ -13,8 +13,8 @@ module Teneo
           Teneo::IngestWorker::Worker.list
         end
 
-        r.on 'build' do
-          r.halt 500, [{ success: false, message: 'Docker image build failed' }] unless Teneo::IngestWorker::Worker.build
+        r.post 'build' do
+          r.halt 500, [{ success: false, message: 'Docker image build failed' }] unless Teneo::IngestWorker::Worker.build!
           { success: true, message: "Image #{Teneo::IngestWorker::Worker::IMAGE} created" }
         end
 

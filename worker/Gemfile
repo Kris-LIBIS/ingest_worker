@@ -2,11 +2,16 @@
 
 source 'https://rubygems.org'
 
-gem 'rerun'
-gem 'roda'
-gem 'puma'
-gem 'dotenv'
-gem 'docker-api'
 
-gem 'awesome_print'
-gem 'rake'
+gem 'rerun', '~> 0.13'
+gem 'roda', '~> 3.29'
+gem 'puma', '~> 4.3'
+gem 'dotenv', '~> 2.7'
+gem 'docker-api', '~> 1.34'
+
+gem 'awesome_print', '~> 1.8'
+gem 'rake', '~> 13.0'
+
+source "https://gem.fury.io/kris-libis/" do
+  gem 'teneo-ingester', '~> 0.2'
+end

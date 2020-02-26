@@ -11,9 +11,5 @@ module Teneo
     autoload :App, 'teneo/ingest_worker/app'
     autoload :Worker, 'teneo/ingest_worker/worker'
 
-    module Helpers
-      autoload :Workers, 'teneo/ingest_worker/helpers/workers'
-    end
-
   end
 end

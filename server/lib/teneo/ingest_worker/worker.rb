@@ -29,10 +29,15 @@ module Teneo
         end
 
         def build!
-          Docker::Image.build_from_dir('../worker',
-                                       t: IMAGE,
-                                       forcerm: true,
-                                       labels: { LABEL => nil }.to_json
+          Docker::Image.build_from_dir(
+            '../worker',
+            t: IMAGE,
+            forcerm: true,
+            labels: { LABEL => nil }.to_json,
+            buildargs: {
+              UID: ENV['USER_ID'],
+              GID: ENV['GROUP_ID']
+            }.to_json
           )
         end
 
@@ -101,7 +106,12 @@ module Teneo
         container = get_container || Docker::Container.create(
             name: "ingest_worker.#{name}",
             'Image' => IMAGE,
-            'Env' => ["NAME=#{name}"]
+            'Env' => ["NAME=#{name}"],
+            'HostConfig' => {
+              'Binds' => [
+                "#{ROOT_DIR}/../worker:/teneo"
+              ]
+            }
         )
         #noinspection RubyStringKeysInHashInspection
         container.update('RestartPolicy' => { 'MaximumRetryCount' => 0, 'Name' => 'unless-stopped' })
