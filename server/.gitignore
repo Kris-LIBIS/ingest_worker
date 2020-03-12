@@ -1,0 +1,12 @@
+/log/*
+/tmp/*
+
+/.idea/*
+/.vscode/*
+
+/Gemfile.lock
+/.env
+/db/schema.rb
+/key.bin
+/.rakeTasks
+.rake_tasks~

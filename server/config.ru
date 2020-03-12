@@ -5,4 +5,13 @@ Dotenv.load
 
 require_relative 'config/environment'
 
-run Teneo::IngestWorker::App.app.freeze
+#require 'warden/jwt_auth'
+#
+#use Warden::Manager do |manager|
+#  manager.default_strategies(:jwt)
+#  manager.failure_app = ->(_env) { [401, {}, ['unauthorized']] }
+#end
+#
+#use Warden::JWTAuth::Middleware
+
+run Teneo::IngestServer::App.app.freeze

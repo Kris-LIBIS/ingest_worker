@@ -2,19 +2,14 @@
 
 source 'https://rubygems.org'
 
-gem 'solargraph'
 gem 'rerun'
 gem 'roda'
-gem 'bcrypt'
-gem 'warden-jwt_auth'
 gem 'puma'
 gem 'awesome_print'
 gem 'dotenv'
 
 gem 'teneo-data_model'
+gem 'teneo-ingester'
+gem 'docker-api'
+gem 'docker-compose'
 gem 'rake'
-gem 'sidekiq'
-
-source "https://gem.fury.io/kris-libis/" do
-  gem 'teneo-ingester', '~> 0.2'
-end
