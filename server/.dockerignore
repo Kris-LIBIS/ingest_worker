@@ -1,4 +1,7 @@
 .vscode
 .solargraph.yml
 .gitignore
+.env
+Gemfile.lock
+setup.sh
 Dockerfile

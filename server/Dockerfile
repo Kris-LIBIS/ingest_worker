@@ -9,16 +9,17 @@ ARG HOME_DIR=/${APP_USER}
 RUN groupadd --gid ${GID} ${APP_USER}
 RUN useradd --home-dir ${HOME_DIR} --create-home --no-log-init --uid ${UID} --gid ${GID} ${APP_USER}
 
+# Copy application data
+COPY . ${HOME_DIR}
+RUN chown -R ${APP_USER}:${APP_USER} ${HOME_DIR}
+
 # Switch to application user
 USER ${APP_USER}
 WORKDIR ${HOME_DIR}
-
-# Copy application data
-COPY Gemfile server.sh config.ru Rakefile config db lib static .
 
 # Application configuration
 ARG API_PORT=3000
 EXPOSE $API_PORT
 
 # Run application
-CMD ["server.sh"]
+CMD ["puma", "-p", "$API_PORT", "-e", "$RUBY_ENV", "--log-requests"]

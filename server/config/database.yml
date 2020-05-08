@@ -2,16 +2,19 @@ default: &default
   adapter: postgresql
   encoding: unicode
 
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  pool: <%= ENV.fetch("DB_POOL_SIZE") { 5 } %>
 
-  data_schema: teneo
-  schema_search_path: teneo, public
+  host: <%= ENV['DB_HOST'] || 'localhost' %>
+  port: <%= ENV['DB_PORT']&.to_i || 5432 %>
 
-  username: teneo
-  password: teneo
+  dba_name: <%= ENV.fetch("DBA_USER") { 'teneo_dba' } %>
+  dba_pass: <%= ENV.fetch("DBA_PASSWORD") { 'teneo_dba' } %>
 
-  dba_name: teneo_dba
-  dba_pass: teneo_dba
+  username: <%= ENV.fetch("DB_USER") { 'teneo' } %>
+  password: <%= ENV.fetch("DB_PASSWORD") { 'teneo' } %>
+
+  data_schema: <%= ENV.fetch("DB_USER") { 'teneo' } %>
+  schema_search_path: <%= ENV.fetch("DB_USER") { 'teneo' } %>, public
 
   migrations_paths: <%= Teneo::IngestServer.migrations_path %>
 
@@ -19,23 +22,12 @@ default: &default
 
 development:
   <<: *default
-  host: localhost
-  port: 5432
-  database: teneo_dev
+  database: <%= ENV['DB_NAME'] || 'teneo_dev' %>
 
 test:
   <<: *default
-  host: localhost
-  port: 5432
-  database: teneo_test
+  database: <%= ENV['DB_NAME'] || 'teneo_test' %>
 
 production:
   <<: *default
-
-  host: <%= ENV['DATABASE_HOST'] || 'teneo_db' %>
-  database: <%= ENV['DATABASE_NAME'] || 'teneo' %>
-  port: <%= ENV['DATABASE_PORT']&.to_i || 5432 %>
-  username: <%= ENV['DATABASE_USERNAME'] %>
-  password: <%= ENV['DATABASE_PASSWORD'] %>
-  dba_name: <%= ENV['DATABASE_DBA_USERNAME'] %>
-  dba_pass: <%= ENV['DATABASE_DBA_PASSWORD'] %>
+  database: <%= ENV['DB_NAME'] || 'teneo' %>

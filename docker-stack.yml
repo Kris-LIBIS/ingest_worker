@@ -1,91 +1,94 @@
 version: "3.7"
 
+x-default: &default
+  networks:
+    - net
+  deploy:
+    replicas: 1
+    restart_policy:
+      condition: on-failure
+      delay: 10s
+      window: 30s
+  
+
 services:
 
   queue:
-    image: rabbitmq:3-management
-#    hostname: teneo_queue
+    image: rabbitmq:3-management-alpine
+    hostname: teneo_queue
+    <<: *default
+    volumes:
+      - queue-data:/var/lib/rabbitmq
     ports:
-      - "15672:15672"
-    networks:
-      - backend
+      - "8081:15672"
     deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-        delay: 10s
-        window: 30s
-
+      placement:
+        constraints:
+          - node.labels.teneo.queue == true
+  
   redis:
-    command: "redis-server --appendonly yes"
     image: redis:5-alpine
     hostname: teneo_redis
+    <<: *default
+    command: "redis-server --appendonly yes"
+    volumes:
+      - redis-data:/data
     ports:
       - "6379"
-    networks:
-      - backend
     deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-        delay: 10s
-        window: 30s
-
+      placement:
+        constraints:
+          - node.labels.teneo.redis == true
+  
   db:
     image: postgres:12-alpine
-#    hostname: teneo_db
-    environment:
-      - POSTGRES_PASSWORD=${DBA_PASS}
-      - POSTGRES_USER=${DBA_USER}
-      - POSTGRES_DB=${DB_NAME}
+    hostname: teneo_db
+    <<: *default
+    env_file:
+      - .dba.credentials.env
+      - .db.credentials.env
+      - .db.host.env
     volumes:
       - db-data:/var/lib/postgresql/data
-    networks:
-      - backend
+      # - ${MNT_DIR:-$PWD}/create_user.sh:/docker-entrypoint-initdb.d/create_user.sh
+    ports:
+      - "${DB_PORT}:5432"
     deploy:
       placement:
         constraints:
-          - node.role == manager
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-        delay: 10s
-        window: 30s
+          - node.labels.teneo.database == true
+  
+  # server:
+  #   image: libis/teneo_server
+  #   hostname: teneo_server
+  #   <<: *default
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - bundle-gems:/bundle-gems
+  #     - oracle-client:/oracle-client
+  #   ports:
+  #     - "8080:3000"
 
-  server:
-    image: teneo/server
-#    hostname: teneo_server
-    networks:
-      - frontend
-      - backend
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - bundle-gems:/bundle-gems
-      - oracle-client:/oracle-client
-    deploy:
-      mode: replicated
-      replicas: 1
-
-  manager:
-    image: teneo/manager
-#    hostname: teneo_manager
-    networks:
-      - backend
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - bundle-gems:/bundle-gems
-      - oracle-client:/oracle-client
-    deploy:
-      mode: global
-      placement:
-        constraints:
-          - node.platform.os == linux
+  # manager:
+  #   image: libis/teneo_manager
+  #   hostname: teneo_manager
+  #   <<: *default
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - bundle-gems:/bundle-gems
+  #     - oracle-client:/oracle-client
+  #   deploy:
+  #     mode: global
+  #     placement:
+  #       constraints:
+  #         - node.platform.os == linux
 
 networks:
-  frontend:
-  backend:
+  net:
 
 volumes:
   db-data:
+  redis-data:
+  queue-data:
   bundle-gems:
   oracle-client:

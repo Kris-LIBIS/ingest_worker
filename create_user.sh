@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 
-set -e
-
-echo "CREATE ROLE ${DB_USER} WITH LOGIN PASSWORD '${DB_PASSWORD}' CREATEDB;" | psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB"
+psql -d postgres -U ${POSTGRES_USER} -c "CREATE ROLE ${DB_USER} WITH LOGIN CREATEDB PASSWORD '${DB_PASSWORD}';"
+psql -d postgres -U ${POSTGRES_USER} -c "CREATE DATABASE ${DB_NAME} WITH OWNER ${DB_USER};"
